@@ -1,13 +1,13 @@
-module.exports = app => {
-    const ldap = require("ldapjs");
-    const router = require("express").Router();
+// module.exports = app => {
+//     const ldap = require('ldapjs');
 
-    require("../routes/shop")(app, router);
+//     const client = ldap.createClient({
+//         url: ['ldap://127.0.0.1:3001'],
+//     });
 
-    // const client = ldap.createClient({
-    //     url: ["ldap://127.0.0.1:10389"],
-    // });
+//     client.on('error', (err) => {
+//         console.error(` - Error #Client-Ldap: ${err}`);
+//     });
+//     // Section: Client LDAP Func ---------------------------------------------------------------
 
-    // Section: Client LDAP Func ---------------------------------------------------------------
-
-}
+// }

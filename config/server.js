@@ -1,19 +1,27 @@
-module.exports = () => {
-    const appConfig = require("../package.json");
-    const app = require("express")();
-
+module.exports = (app, appConfig) => {
     app.fs = require('fs');
     app.path = require('path');
+    const express = require('express');
     app.port = appConfig.port;
-    app.rootDir = require('../util/path');
     const server = require('http').createServer(app);
     server.listen(app.port);
+    console.log(` - Debugging main app on localhost:${app.port}`);
 
-    console.log(` - Debugging on localhost:${app.port}`);
+    app.publicPath = app.path.join(__dirname, '../public');
+    app.imagePath = app.path.join(app.publicPath, 'img');
+    app.viewPath = app.path.join(__dirname, '../view');
+    app.modulesPath = app.path.join(__dirname, '../modules');
+    app.faviconPath = app.path.join(app.imagePath, 'favicon.png');
 
     // Set up ---------------------------------------------------------------
-    require("./bodyParser")(app);
-    require("./ldap.admin")(app);
-    require("./ldap.client")(app);
+    require('./lib/fs')(app);
+    require('./request-config')(app, express);
+    require('./io')(app);
 
-}
+    require('./common')(app, appConfig);
+    require('./view')(app, express);
+    require('./permission')(app);
+
+    app.createTemplate('login', 'admin');
+    app.loadModules();
+};
