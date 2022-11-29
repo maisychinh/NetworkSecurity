@@ -5,6 +5,8 @@ module.exports = app => {
     );
 
     app.get('/', app.templates.login);
+    app.get('/register', app.templates.login);
+
     app.get('/user', app.permission.check('user:login'), app.templates.admin);
     app.get('/user/dashboard', app.permission.check('dashboard:standard'), app.templates.admin);
     app.post('/login', (req, res) => app.auth.loginUser(req, res));

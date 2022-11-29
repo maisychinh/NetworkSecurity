@@ -3,10 +3,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { connect, Provider } from 'react-redux';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import Login from 'view/component/Login';
 import { getSystemState, register, login, forgotPassword, logout } from 'modules/_default/_init/redux';
 
 // Load modules -------------------------------------------------------------------------------------------------------------------------------------
@@ -36,12 +35,18 @@ window.T = T;
 // Main DOM render ----------------------------------------------------------------------------------------------------------------------------------
 class App extends React.Component {
     state = { routes: [], loading: true };
-
+    componentDidMount() {
+        const routes = Object.keys(routeMapper).sort().reverse().map(key => routeMapper[key]);
+        this.setState({ routes });
+        // this.props.getSystemState(() => this.setState({ routes }));
+    }
     render() {
         return (
             <BrowserRouter>
                 <React.Fragment>
-                    <Login register={this.props.register} login={this.props.login} forgotPassword={this.props.forgotPassword} system={this.props.system} pushHistory={url => this.props.history.push(url)} />
+                    <Switch>
+                        {this.state.routes}
+                    </Switch>
                 </React.Fragment>
             </BrowserRouter>
         );
