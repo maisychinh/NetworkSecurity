@@ -4,7 +4,12 @@
     "description": "Assignment of Security Network, HCMUT2022",
     "main": "app.js",
     "port": 3000,
-    "ldapPort": 3001,
+    "ldap": {
+        "ip": "localhost",
+        "port": 10389,
+        "username": "uid=admin,ou=system",
+        "password": "helloworld"
+    },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "nodemon": "nodemon app.js --ignore webpack.config.js --ignore *.json",
@@ -68,6 +73,7 @@
         "body-parser": "^1.19.0",
         "buffer": "^6.0.3",
         "compression": "^1.7.4",
+        "ldap-authentication": "^2.2.7",
         "connect-redis": "^5.0.0",
         "cookie-parser": "^1.4.5",
         "copy-to-clipboard": "^3.3.1",
