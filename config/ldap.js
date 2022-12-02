@@ -47,7 +47,6 @@ module.exports = (app, appConfig) => {
                     });
                 },
 
-
                 add: (type, userId, email, password, cn, sn, done) => {
                     const entry = {
                         cn, sn, objectclass: ['inetOrgPerson', 'organizationalPerson', 'person'], uid: userId,
@@ -62,11 +61,6 @@ module.exports = (app, appConfig) => {
                     });
                 }
             };
-
-            // app.ldap.add('student', '1810582', 'tien.trantan', '12345', 'Tien', 'Tan', () => {
-
-            // });
-
         }
     });
 
