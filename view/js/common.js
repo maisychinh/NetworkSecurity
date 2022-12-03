@@ -6,7 +6,7 @@ import './sweetalert.min.js';
 
 const T = {
     title: title => {
-        document.title = title && title != '' ? `${document.notification || ''} ${title} | Cholimex` : 'Cholimex';
+        document.title = title && title != '' ? `${document.notification || ''} ${title} | BK.IAM` : 'BK.IAM';
     },
     FileSaver,
     rootUrl: window.location.origin,
