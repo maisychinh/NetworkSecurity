@@ -7,8 +7,12 @@ export default {
     // redux: { system },
     routes: [
         {
-            path: '/',
+            path: '/dashboard',
             component: Loadable({ loading: Loading, loader: () => import('./adminPage') })
+        },
+        {
+            path: '/',
+            component: Loadable({ loading: Loading, loader: () => import('../../../view/component/Login') })
         },
     ]
 };

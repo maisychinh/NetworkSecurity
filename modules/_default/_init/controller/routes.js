@@ -4,7 +4,9 @@ module.exports = app => {
         { name: 'user:login', menu: { parentMenu: app.parentMenu.user } },
     );
 
-    app.get('/', app.templates.admin);
+    app.get('/', app.templates.login);
+
+    app.get('/dashboard', app.templates.admin);
 
     // API ------------------------------------------------------------------------------------------------------------------------------------------
     app.get('/api/system', async (req, res) => {
