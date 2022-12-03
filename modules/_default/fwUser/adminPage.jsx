@@ -5,20 +5,26 @@ import T from 'view/js/common';
 class EditModal extends AdminModal {
 
     onShow = (item) => {
-        this.setState({ uid: item.uid });
         this.type.value(this.props.data[item.type]);
+        this.setState({ uid: item.uid }, () => {
+            this.uid.value(item.uid || '');
+            this.cn.value(item.cn || '');
+            this.sn.value(item.sn || '');
+            this.mail.value(item.mail || '');
+        });
     }
 
     onSubmit = () => {
         const data = {
-            userId: getValue(this.uid),
+            uid: getValue(this.uid),
             cn: getValue(this.cn),
             sn: getValue(this.sn),
             mail: getValue(this.mail),
             type: getValue(this.type),
-            password: getValue(this.password)
+            password: this.password ? getValue(this.password) : null
         };
-        this.state.uid ? this.props.update(this.state.uid, data) : this.props.create(data, this.hide);
+        if (!this.password) delete data.password;
+        this.state.uid ? this.props.update(this.state.uid, data, this.hide) : this.props.create(data, this.hide);
     }
     render() {
         const title = this.state.uid ? 'Điều chỉnh' : 'Thêm mới';
@@ -30,7 +36,7 @@ class EditModal extends AdminModal {
                 <FormTextBox ref={e => this.cn = e} label='Common name' className='col-md-6' required />
                 <FormTextBox ref={e => this.sn = e} label='Surname' className='col-md-6' required />
                 <FormTextBox ref={e => this.mail = e} label='Email' className='col-md-12' required />
-                <FormTextBox type='password' ref={e => this.password = e} label='Password' className='col-md-12' required />
+                {this.state.uid ? <></> : <FormTextBox type='password' ref={e => this.password = e} label='Password' className='col-md-12' required />}
             </div>
         });
     }
@@ -61,6 +67,7 @@ export default class AdminUserPage extends AdminPage {
             }
         });
     }
+
     createUser = (data, done) => {
         T.post('/api/users', { data }, result => {
             if (result.error) {
@@ -70,6 +77,32 @@ export default class AdminUserPage extends AdminPage {
                 this.getData();
                 done && done();
             }
+        });
+    }
+
+    updateUser = (userId, changes, done) => {
+        T.put('/api/users', { userId, changes }, result => {
+            if (result.error) {
+                T.notify('Có lỗi khi cập nhật người dùng', 'danger');
+            } else {
+                T.notify('Cập nhật người dùng thành công', 'success');
+                this.getData();
+                done && done();
+            }
+        });
+    }
+
+    deleteUser = (item, done) => {
+        T.confirm('Xác nhận', `Bạn muốn xoá người dùng ID: ${item.uid}`, 'warning', true, isConfirm => {
+            isConfirm && T.delete(`/api/users/${this.state.types[this.tab.selectedTabIndex()]}/${item.uid}`, result => {
+                if (result.error) {
+                    T.notify('Có lỗi khi xoá người dùng', 'danger');
+                } else {
+                    T.notify('Xoá người dùng thành công', 'success');
+                    this.getData();
+                    done && done();
+                }
+            });
         });
     }
 
@@ -84,6 +117,7 @@ export default class AdminUserPage extends AdminPage {
                 <th style={{ width: '30%' }}>Common name</th>
                 <th style={{ width: '30%' }}>Surname</th>
                 <th style={{ width: 'auto' }}>Email</th>
+                <th style={{ width: 'auto' }}>Actions</th>
             </tr>,
             renderRow: (item, index) =>
                 <tr key={index}>
@@ -92,6 +126,7 @@ export default class AdminUserPage extends AdminPage {
                     <TableCell content={item.cn} />
                     <TableCell content={item.sn} />
                     <TableCell style={{ whiteSpace: 'nowrap' }} content={item.mail} />
+                    <TableCell type='buttons' onEdit={() => { this.modal.show({ ...item, type: this.tab.selectedTabIndex() }); }} onDelete={() => this.deleteUser(item)} permission={{ write: true, delete: true }} />
                 </tr>
         });
 
@@ -106,7 +141,7 @@ export default class AdminUserPage extends AdminPage {
                         </div>
                     }))
                 } /> : <div>Chưa có dữ liệu định danh nào!</div>}
-                <EditModal ref={e => this.modal = e} data={types} create={this.createUser} />
+                <EditModal ref={e => this.modal = e} data={types} create={this.createUser} update={this.updateUser} />
             </>,
             onCreate: e => e.preventDefault() || this.modal.show({ type: this.tab.selectedTabIndex() })
         });

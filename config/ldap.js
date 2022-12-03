@@ -103,20 +103,26 @@ module.exports = (app, appConfig) => {
                     });
                 }),
 
-                modify: async (type, userId, password, change) => new Promise(resolve => {
-                    app.ldap.auth(type, userId, password, checkValidUser => {
-                        if (!checkValidUser) resolve({ error: 'Invalid user' });
-                        else {
-                            client.modify(userId, new ldap.Change({
-                                operation: 'replace',
-                                modification: change
-                            }), (error, result) => {
-                                if (error) resolve({ error });
-                                else resolve({ result });
-                            });
-                        }
-                    });
+                modify: async (type, userId, changes) => new Promise(resolve => {
+                    for (let i = 0; i < Object.entries(changes).length; i++) {
+                        let [key, value] = Object.entries(changes)[i];
+                        let change = { [key]: value };
+                        console.log(change);
+                        client.modify(`uid=${userId},ou=${type},dc=ussh,dc=edu,dc=vn`, new ldap.Change({
+                            operation: 'replace',
+                            modification: change
+                        }), (error, result) => {
+                            if (error) resolve({ error });
+                            else if (i == Object.entries(changes).length - 1) resolve({ result });
+                        });
+                    }
+                }),
 
+                remove: (type, userId) => new Promise(resolve => {
+                    client.del(`uid=${userId},ou=${type},dc=ussh,dc=edu,dc=vn`, (error, result) => {
+                        if (error) resolve({ error });
+                        else resolve({ result });
+                    });
                 })
             };
 
