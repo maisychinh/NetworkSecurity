@@ -2,12 +2,51 @@ module.exports = (app, appConfig) => {
     const ldap = require('ldapjs'),
         { authenticate } = require('ldap-authentication');
     const client = ldap.createClient({ url: `ldap://${appConfig.ldap.ip}:${appConfig.ldap.port}` });
-    client.bind(appConfig.ldap.username, appConfig.ldap.password, error => {
+
+    client.bind(appConfig.ldap.username, appConfig.ldap.password, async (error) => {
         if (error) {
             console.log(' - Error LDAP connection:', error);
         } else {
             console.log(` - Connect to LDAP Server at ${client.host}:${client.port}`);
+
             app.ldap = {
+                getAllGroup: () => new Promise(resolve => {
+                    client.search('dc=ussh,dc=edu,dc=vn', { filter: '(&(ou=*))', scope: 'sub', attributes: ['*'] }, (error, result) => {
+                        if (error) resolve({ error });
+                        else {
+                            const data = [];
+                            result.on('searchEntry', (entry) => {
+                                data.push(entry.object.cn);
+                            });
+                            result.on('end', () => {
+                                resolve(data);
+                            });
+
+                        }
+                    });
+                }),
+
+                getAllUser: (types) => new Promise((resolve, reject) => {
+                    const items = {};
+                    for (let i = 0; i < types.length; i++) {
+                        const type = types[i];
+                        client.search(`ou=${type},dc=ussh,dc=edu,dc=vn`, { filter: '(&(uid=*))', scope: 'sub', attributes: ['*'] }, (error, result) => {
+                            if (error) reject({ error });
+                            else {
+                                const data = [];
+                                result.on('searchEntry', (entry) => {
+                                    data.push(entry.object);
+                                });
+                                result.on('end', () => {
+                                    items[type] = data;
+                                    i == types.length - 1 && resolve(items);
+                                });
+                            }
+                        });
+                    }
+
+                }),
+
                 search: (type = 'staff', userId, done) => new Promise(resolve => {
                     // type = 'staff' || 'student' || 'outsider'
                     client.search(`uid=${userId},ou=${type},dc=ussh,dc=edu,dc=vn`, {}, (error, result) => {
@@ -34,33 +73,54 @@ module.exports = (app, appConfig) => {
                     });
                 }),
 
-                auth: (type = 'staff', userId, password, done) => { // type = 'staff' || 'student' || 'outsider'
+                auth: (type = 'staff', userId, password, done) => new Promise(resolve => { // type = 'staff' || 'student' || 'outsider'
                     authenticate({
                         ldapOpts: { url: `ldap://${appConfig.ldap.ip}:${appConfig.ldap.port}` },
                         userDn: `uid=${userId},ou=${type},dc=ussh,dc=edu,dc=vn`,
                         userPassword: password,
                     }).then(validUser => {
-                        done(validUser);
+                        done && done(validUser);
+                        resolve(validUser);
                     }).catch(error => {
                         console.error('Error: login fail!', error);
-                        done(false);
+                        done && done(false);
+                        resolve(false);
                     });
-                },
+                }),
 
-                add: (type, userId, email, password, cn, sn, done) => {
+                add: (type, userId, mail, userPassword, cn, sn, done) => new Promise(resolve => {
                     const entry = {
                         cn, sn, objectclass: ['inetOrgPerson', 'organizationalPerson', 'person'], uid: userId,
-                        // email, password
+                        mail, userPassword
                     };
                     client.add(`uid=${userId},ou=${type},dc=ussh,dc=edu,dc=vn`, entry, (err) => {
                         if (err) console.error(err);
                         else {
                             console.log(` - Add ${userId} successfully`);
-                            done();
+                            done && done();
+                            resolve();
                         }
                     });
-                }
+                }),
+
+                modify: async (type, userId, password, change) => new Promise(resolve => {
+                    app.ldap.auth(type, userId, password, checkValidUser => {
+                        if (!checkValidUser) resolve({ error: 'Invalid user' });
+                        else {
+                            client.modify(userId, new ldap.Change({
+                                operation: 'replace',
+                                modification: change
+                            }), (error, result) => {
+                                if (error) resolve({ error });
+                                else resolve({ result });
+                            });
+                        }
+                    });
+
+                })
             };
+
+            require('./auth')(app, appConfig);
         }
     });
 

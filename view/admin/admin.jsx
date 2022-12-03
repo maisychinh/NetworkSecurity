@@ -15,7 +15,6 @@ import { getSystemState, logout } from 'modules/_default/_init/redux';
 // import Loadable from 'react-loadable';
 // import Loading from 'view/component/Loading';
 import AdminHeader from '../component/AdminHeader';
-import AdminMenu from '../component/AdminMenu';
 
 // Load modules -------------------------------------------------------------------------------------------------------------------------------------
 import { modules } from './modules.jsx';
@@ -24,13 +23,15 @@ const reducers = {}, reducerContainer = {}, routeMapper = {},
 modules.forEach(module => {
     module.init && module.init();
     module.routes.forEach(route => addRoute(route));
-
-    if (module.redux.parent && module.redux.reducers) {
-        if (!reducerContainer[module.redux.parent]) reducerContainer[module.redux.parent] = {};
-        reducerContainer[module.redux.parent] = Object.assign({}, reducerContainer[module.redux.parent], module.redux.reducers);
-    } else {
-        Object.keys(module.redux).forEach(key => reducers[key] = module.redux[key]);
+    if (module && module.redux) {
+        if (module.redux.parent && module.redux.reducers) {
+            if (!reducerContainer[module.redux.parent]) reducerContainer[module.redux.parent] = {};
+            reducerContainer[module.redux.parent] = Object.assign({}, reducerContainer[module.redux.parent], module.redux.reducers);
+        } else {
+            Object.keys(module.redux).forEach(key => reducers[key] = module.redux[key]);
+        }
     }
+
 });
 Object.keys(reducerContainer).forEach(key => reducers[key] = combineReducers(reducerContainer[key]));
 
@@ -72,7 +73,7 @@ class App extends React.Component {
                         <AdminHeader logout={this.props.logout} />
                         <div className='pcoded-main-container'>
                             <div className='pcoded-wrapper'>
-                                <AdminMenu />
+                                {/* <AdminMenu /> */}
                                 <div className='pcoded-content'>
                                     <Switch>
                                         {this.state.routes}

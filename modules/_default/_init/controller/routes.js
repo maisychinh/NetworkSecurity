@@ -4,46 +4,13 @@ module.exports = app => {
         { name: 'user:login', menu: { parentMenu: app.parentMenu.user } },
     );
 
-    app.get('/', app.templates.login);
-    app.get('/register', app.templates.login);
-
-    app.get('/user', app.permission.check('user:login'), app.templates.admin);
-    app.get('/user/dashboard', app.permission.check('dashboard:standard'), app.templates.admin);
-    app.post('/login', (req, res) => app.auth.loginUser(req, res));
-    app.post('/logout', (req, res) => app.auth.logoutUser(req, res));
-
-    app.post('/api/token/login', (req, res) => app.auth.loginUser(req, res, true));
-    app.post('/api/token/get-user', (req, res) => app.auth.debugAsUser(req, res));
-
-
-    // Home -----------------------------------------------------------------------------------------------------------------------------------------
-    // '/registered(.htm(l)?)?', '/active-user/:userId', '/forgot-password/:userId/:userToken',
-    ['/index.htm(l)?', '/request-permissions(/:roleId?)', '/request-login'].forEach(route => app.get(route, app.templates.login));
-    ['/404.htm(l)?'].forEach(route => app.get(route, app.templates.admin));
+    app.get('/', app.templates.admin);
 
     // API ------------------------------------------------------------------------------------------------------------------------------------------
-    app.put('/api/system', app.permission.check('system:settings'), async (req, res) => {
+    app.get('/api/system', async (req, res) => {
         try {
-            const { password, address, address2, email, mobile, fax, facebook, youtube, twitter, instagram, linkMap } = req.body;
-            if (req.body.password) {
-                await app.state.set('emailPassword', password);
-            } else {
-                const changes = [];
-                if (address || address == '') changes.push('address', address.trim());
-                if (address2 || address2 == '') changes.push('address2', address2.trim());
-                if (email) changes.push('email', email.trim());
-                if (mobile || mobile == '') changes.push('mobile', mobile.trim());
-                if (fax || fax == '') changes.push('fax', fax.trim());
-                if (facebook || facebook == '') changes.push('facebook', facebook.trim());
-                if (youtube || youtube == '') changes.push('youtube', youtube.trim());
-                if (twitter || twitter == '') changes.push('twitter', twitter.trim());
-                if (instagram || instagram == '') changes.push('instagram', instagram.trim());
-                if (linkMap || linkMap == '') changes.push('linkMap', linkMap.trim());
-                await app.state.set(...changes);
-            }
-
-            const data = await app.state.get();
-            res.send(data);
+            const data = await app.ldap.getAllGroup();
+            res.send({ data });
         } catch (error) {
             res.send({ error });
         }

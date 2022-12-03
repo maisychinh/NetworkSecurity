@@ -154,10 +154,10 @@ class AdminHeader extends React.Component {
             <nav className='navbar header-navbar pcoded-header'>
                 <div className='navbar-wrapper'>
                     <div className='navbar-logo'>
-                        <a className='mobile-menu' id='mobile-collapse' href='#'>
+                        {/* <a className='mobile-menu' id='mobile-collapse' href='#'>
                             <i className='feather icon-menu' />
-                        </a>
-                        <Link className='app-header__logo' to='/user'>Cholimex</Link>
+                        </a> */}
+                        <Link className='app-header__logo' to='/user'>BK Identity and Access Management</Link>
                         <a className='mobile-options'>
                             <i className='feather icon-more-horizontal' />
                         </a>
@@ -225,7 +225,7 @@ class AdminHeader extends React.Component {
                                     </ul>
                                 </div>
                             </li> */}
-                            <li className='user-profile header-notification'>
+                            {/* <li className='user-profile header-notification'>
                                 <div className='dropdown-primary dropdown'>
                                     <div className='dropdown-toggle' data-toggle='dropdown'>
                                         <img src={user.image} className='img-radius' alt='avatar' />
@@ -260,7 +260,7 @@ class AdminHeader extends React.Component {
                                         </li>
                                     </ul>
                                 </div>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
                 </div>
