@@ -17,7 +17,7 @@ module.exports = (app, appConfig) => {
     require('./lib/fs')(app);
     require('./request-config')(app, express);
     require('./io')(app);
-
+    require('./database')(app, appConfig);
     require('./common')(app, appConfig);
     require('./view')(app, express);
     require('./permission')(app);

@@ -10,6 +10,13 @@
         "username": "uid=admin,ou=system",
         "password": "helloworld"
     },
+    "db": {
+        "mongoDB": {
+            "dbName": "iam_system",
+            "host": "localhost",
+            "port": 27017
+        }
+    },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "nodemon": "nodemon app.js --ignore webpack.config.js --ignore *.json",

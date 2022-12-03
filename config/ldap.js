@@ -125,8 +125,6 @@ module.exports = (app, appConfig) => {
                     });
                 })
             };
-
-            require('./auth')(app, appConfig);
         }
     });
 
