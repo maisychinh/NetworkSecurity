@@ -47,20 +47,26 @@ module.exports = (app, appConfig) => {
 
                 }),
 
-                search: (type = 'staff', userId, done) => new Promise(resolve => {
+                search: (mail, done) => new Promise(resolve => {
                     // type = 'staff' || 'student' || 'outsider'
-                    client.search(`uid=${userId},ou=${type},dc=ussh,dc=edu,dc=vn`, {}, (error, result) => {
+                    client.search('dc=ussh,dc=edu,dc=vn', {
+                        filter: `(&(objectClass=inetOrgPerson)(mail=${mail}))`,
+                        scope: 'sub',
+                        client: '*',
+                        attributes: ['mail', 'uid', 'objectClass']
+                    }, (error, result) => {
                         if (error) {
                             console.log('Error: Search =>', error);
                             done(error);
                             resolve({ error });
                         } else {
+                            let data = null;
                             result.on('searchRequest', (searchRequest) => {
                                 console.log('searchRequest: ', searchRequest.messageID);
                             });
                             result.on('searchEntry', (entry) => {
                                 console.log('entry: ' + JSON.stringify(entry.object));
-                                resolve({ result: entry.object });
+                                data = entry.object;
                             });
                             result.on('searchReference', (referral) => {
                                 console.log('referral: ' + referral.uris.join());
@@ -69,24 +75,31 @@ module.exports = (app, appConfig) => {
                                 console.error('error: ' + err.message);
                                 resolve({ error: err.message });
                             });
+                            result.on('end', () => {
+                                resolve(data);
+                            });
                         }
                     });
                 }),
 
-                auth: (type = 'staff', userId, password, done) => new Promise(resolve => { // type = 'staff' || 'student' || 'outsider'
-                    authenticate({
-                        ldapOpts: { url: `ldap://${appConfig.ldap.ip}:${appConfig.ldap.port}` },
-                        userDn: `uid=${userId},ou=${type},dc=ussh,dc=edu,dc=vn`,
-                        userPassword: password,
-                    }).then(validUser => {
-                        done && done(validUser);
-                        resolve(validUser);
-                    }).catch(error => {
-                        console.error('Error: login fail!', error);
-                        done && done(false);
-                        resolve(false);
-                    });
-                }),
+                auth: async (email, password, done) => {
+                    const checkUser = await app.ldap.search(email);
+                    if (!checkUser) {
+                        return false;
+                    }
+                    else if (checkUser.error) {
+                        done && done({ error: checkUser.error });
+                        return false;
+                    } else {
+                        let userDn = checkUser.dn;
+                        const isValidUser = await authenticate({
+                            ldapOpts: { url: `ldap://${appConfig.ldap.ip}:${appConfig.ldap.port}` },
+                            userDn, userPassword: password,
+                        });
+                        if (isValidUser) return checkUser.uid;
+                        else return false;
+                    }
+                },
 
                 add: (type, userId, mail, userPassword, cn, sn, done) => new Promise(resolve => {
                     const entry = {

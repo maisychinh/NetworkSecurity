@@ -31,11 +31,11 @@ class LoginPage extends React.Component {
         } else if (data.password === '') {
             this.txtPassword.current.focus();
         } else {
-            this.props.login(data, result => {
-                console.log(result);
-                errorMessage.html(result.error);
-                if (result.user) {
-                    window.location = '/user';
+            T.post('/api/user/login-by-pass', data, result => {
+                if (result.error) {
+                    errorMessage.html('Xác thực thất bại');
+                } else {
+                    window.location.pathname = '/dashboard';
                 }
             });
         }

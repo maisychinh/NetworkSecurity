@@ -1,5 +1,5 @@
 module.exports = (app, appConfig) => {
-    app.database = {};
+    app.database = {}, app.model = {};
     // Connect MongoDB ----------------------------------------------------------------------------
     const mongoConnectionString = `mongodb://localhost:${appConfig.db.mongoDB.port}/${appConfig.db.mongoDB.dbName}`;
     const mongoose = require('mongoose');

@@ -38,8 +38,8 @@ class App extends React.Component {
     componentDidMount() {
         const routes = Object.keys(routeMapper).sort().reverse().map(key => routeMapper[key]);
         this.setState({ routes });
-        // this.props.getSystemState(() => this.setState({ routes }));
     }
+
     render() {
         return (
             <BrowserRouter>

@@ -1,7 +1,6 @@
 module.exports = app => {
 
-    // API:
-
+    // API ------------------------------------------------------------------------------------------------------------------------------------
     app.get('/api/users/all', async (req, res) => {
         try {
             let types = req.query.types;
@@ -46,6 +45,25 @@ module.exports = app => {
             res.end();
         } catch (error) {
             console.log(error);
+            res.send({ error });
+        }
+    });
+
+    app.post('/api/user/login-by-pass', async (req, res) => {
+        try {
+            let { email, password } = req.body;
+            const validUser = await app.ldap.auth(email, password);
+            if (validUser) {
+                await app.model.authLog.create({
+                    uid: validUser,
+                    method: 'mail_pass',
+                    time: Date.now()
+                });
+                res.end();
+            } else {
+                res.send({ error: 'Login fail!' });
+            }
+        } catch (error) {
             res.send({ error });
         }
     });
