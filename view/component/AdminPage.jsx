@@ -250,8 +250,8 @@ export class FormTabs extends React.Component {
             const tabId = id + '_' + index + this.randomKey,
                 className = index == this.state.tabIndex ? ' active show' : '';
             tabLinks.push(
-                <li key={index} className={'nav-item' + className}>
-                    <a className='nav-link' data-toggle='tab' href={'#' + tabId} onClick={(e) => this.onSelectTab(e, index)}>
+                <li key={index} className={'nav-item'}>
+                    <a className={'nav-link' + className} data-toggle='tab' href={'#' + tabId} onClick={(e) => this.onSelectTab(e, index)}>
                         {item.title}
                     </a>
                 </li>

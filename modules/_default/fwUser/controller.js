@@ -54,11 +54,7 @@ module.exports = app => {
             let { email, password } = req.body;
             const validUser = await app.ldap.auth(email, password);
             if (validUser) {
-                await app.model.authLog.create({
-                    uid: validUser,
-                    method: 'mail_pass',
-                    time: Date.now()
-                });
+                await app.model.authLog.create({ uid: validUser, method: 'mail_pass', time: Date.now() });
                 res.end();
             } else {
                 res.send({ error: 'Login fail!' });

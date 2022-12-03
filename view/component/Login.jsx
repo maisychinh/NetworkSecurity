@@ -4,6 +4,7 @@ import T from 'view/js/common';
 
 class LoginPage extends React.Component {
     constructor (props) {
+        document.title = 'Login';
         super(props);
         this.txtEmail = React.createRef();
         this.txtPassword = React.createRef();
