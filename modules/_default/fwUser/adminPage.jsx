@@ -27,9 +27,9 @@ class EditModal extends AdminModal {
         this.state.uid ? this.props.update(this.state.uid, data, this.hide) : this.props.create(data, this.hide);
     }
     render() {
-        const title = this.state.uid ? 'Điều chỉnh' : 'Thêm mới';
+        const action = this.state.uid ? 'Điều chỉnh' : 'Thêm mới';
         return this.renderModal({
-            title: title + ' thông tin định danh',
+            title: action + ' thông tin định danh',
             body: <div className='row'>
                 <FormSelect ref={e => this.type = e} label='Type' className='col-md-12' data={this.props.data} required />
                 <FormTextBox ref={e => this.uid = e} label='User ID' className='col-md-12' required />
@@ -59,7 +59,7 @@ export default class AdminUserPage extends AdminPage {
                             if (res.error) {
                                 T.notify('Lỗi lấy dữ liệu định danh', 'danger');
                             } else {
-                                this.setState({ items: res.items });
+                                this.setState({ items: res.items, logs: res.logs });
                             }
                         });
                     }
@@ -107,7 +107,7 @@ export default class AdminUserPage extends AdminPage {
     }
 
     render() {
-        let { items, types } = this.state;
+        let { items, types, logs } = this.state;
         const tableByType = (type) => renderTable({
             emptyTable: 'Chưa có dữ liệu người dùng',
             getDataSource: () => items[type],
@@ -117,17 +117,21 @@ export default class AdminUserPage extends AdminPage {
                 <th style={{ width: '30%' }}>Common name</th>
                 <th style={{ width: '30%' }}>Surname</th>
                 <th style={{ width: 'auto' }}>Email</th>
+                <th style={{ width: 'auto' }}>Last login</th>
                 <th style={{ width: 'auto' }}>Actions</th>
             </tr>,
-            renderRow: (item, index) =>
-                <tr key={index}>
+            renderRow: (item, index) => {
+                let log = (logs || []).find(log => log.uid == item.uid);
+                return (<tr key={index}>
                     <TableCell content={index + 1} />
                     <TableCell content={item.uid} />
                     <TableCell content={item.cn} />
                     <TableCell content={item.sn} />
                     <TableCell style={{ whiteSpace: 'nowrap' }} content={item.mail} />
+                    <TableCell style={{ whiteSpace: 'nowrap' }} content={log ? `${log.method}: ${T.dateToText(log.time, 'HH:MM:ss dd/mm/yyyy')}` : ''} />
                     <TableCell type='buttons' onEdit={() => { this.modal.show({ ...item, type: this.tab.selectedTabIndex() }); }} onDelete={() => this.deleteUser(item)} permission={{ write: true, delete: true }} />
-                </tr>
+                </tr>);
+            }
         });
 
         return this.renderPage({

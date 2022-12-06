@@ -12,7 +12,33 @@ module.exports = (app) => {
             const newData = await model.create(data);
             await newData.save();
             return { data: newData };
-        }
+        },
+
+        get: async (condition) => {
+            if (typeof condition == 'string') {
+                return await model.findById(condition).select().exec();
+            } else {
+                return await model.findOne(condition).select().exec();
+            }
+        },
+
+        getAllDistinct: async () => {
+            return await model.aggregate([
+                { '$sort': { 'time': -1 } },
+                {
+                    '$group': {
+                        '_id': '$method',
+                        'doc': { '$first': '$$ROOT' }
+                    }
+                },
+                {
+                    '$replaceRoot': {
+                        'newRoot': '$doc'
+                    }
+                }
+            ]);
+            // return await model.find(condition || {}).sort({ time: 1 }).select().exec();
+        },
     };
 
 };

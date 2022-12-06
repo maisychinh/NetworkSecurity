@@ -4,8 +4,11 @@ module.exports = app => {
     app.get('/api/users/all', async (req, res) => {
         try {
             let types = req.query.types;
-            const items = await app.ldap.getAllUser(types);
-            res.send({ items });
+            const [items, logs] = await Promise.all([
+                app.ldap.getAllUser(types),
+                app.model.authLog.getAllDistinct(),
+            ]);
+            res.send({ items, logs });
         } catch (error) {
             console.log(error);
             res.send({ error });
