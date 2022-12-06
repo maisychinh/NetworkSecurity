@@ -58,7 +58,10 @@ module.exports = app => {
             let { email, password } = req.body;
             const validUser = await app.ldap.auth(email, password);
             if (validUser.uid) {
-                await app.model.authLog.create({ uid: validUser.uid, method: 'mail_pass', time: Date.now() });
+                await Promise.all([
+                    app.model.authLog.create({ uid: validUser.uid, method: 'mail_pass', time: Date.now() }),
+                    app.model.user.create({ uid: validUser.uid })
+                ]);
                 req.session.user = {
                     email: validUser.mail,
                     uid: validUser.uid,

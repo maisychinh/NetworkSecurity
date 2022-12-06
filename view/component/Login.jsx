@@ -89,21 +89,17 @@ class LoginPage extends React.Component {
                                         </div> */}
                                         <div className='row m-t-30'>
                                             <div className='col-md-12'>
-                                                <button ref={this.btnSend} type='button' className='btn btn-primary btn-md btn-block waves-effect waves-light text-center m-b-20' onClick={this.onSubmit}>
+                                                <button ref={this.btnSend} type='button' className='btn btn-primary btn-md btn-block waves-effect waves-light text-center m-b-10' onClick={this.onSubmit}>
                                                     Sign in
                                                 </button>
                                             </div>
-                                            <div className='col-md-12'>
+                                            {/* <div className='col-md-12'>
                                                 <button ref={this.btnSend} type='button' className='btn btn-warning btn-md btn-block waves-effect waves-light text-center m-b-20' onClick={() => this.props.history.push('/register')}>
                                                     Register
                                                 </button>
-                                            </div>
+                                            </div> */}
                                         </div>
                                         <hr />
-                                        <div className='row'>
-                                            <div className='col-md-10'>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </form>

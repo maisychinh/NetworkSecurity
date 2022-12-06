@@ -1,7 +1,7 @@
 module.exports = (app) => {
     const schema = app.database.mongoDB.Schema({
         uid: String,
-        method: { type: String, enum: ['mail_pass', 'username_pass', 'smart_card', 'pin'], default: 'username_pass' },
+        method: { type: String, enum: ['mail_pass', 'username_pass', 'smart_card', 'pin'], default: 'mail_pass' },
         time: Number,
     });
 
