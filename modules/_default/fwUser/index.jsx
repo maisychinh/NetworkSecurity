@@ -10,6 +10,11 @@ export default {
             path: '/dashboard',
             component: Loadable({ loading: Loading, loader: () => import('./adminPage') })
         },
+
+        {
+            path: '/user',
+            component: Loadable({ loading: Loading, loader: () => import('./userPage') })
+        },
         {
             path: '/',
             component: Loadable({ loading: Loading, loader: () => import('../../../view/component/Login') })

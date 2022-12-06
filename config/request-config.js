@@ -1,6 +1,12 @@
 module.exports = (app, express) => {
     app.url = require('url');
-
+    const session = require('express-session');
+    app.use(session({
+        resave: true,
+        saveUninitialized: true,
+        secret: 'networksecurity',
+        cookie: { maxAge: 60000 }
+    }));
     // Protect your app from some well-known web vulnerabilities by setting HTTP headers appropriately
     const helmet = require('helmet');
     app.use(helmet.dnsPrefetchControl());

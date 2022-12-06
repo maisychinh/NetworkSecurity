@@ -2,7 +2,7 @@ module.exports = (app) => {
     const checkPermissions = (req, res, next, permissions) => {
         if (req.session?.user) {
             const user = req.session.user;
-            if (user.permissions && user.permissions.contains(permissions)) {
+            if (user.type && user.type.includes(permissions)) {
                 next();
             } else if (permissions.length == 0) {
                 next();
@@ -17,7 +17,7 @@ module.exports = (app) => {
     const checkOrPermissions = (req, res, next, permissions) => {
         if (req.session.user) {
             const user = req.session.user;
-            if (user.permissions && user.permissions.exists(permissions)) {
+            if (user.type && permissions.includes(user.type)) {
                 next();
             } else if (permissions.length == 0) {
                 next();
@@ -34,7 +34,7 @@ module.exports = (app) => {
             if (req.originalUrl.startsWith('/api')) {
                 res.send({ error: req.session.user ? 'request-permissions' : 'request-login' });
             } else {
-                res.redirect(req.session?.user ? '/request-permissions' : '/request-login');
+                res.redirect('/');
             }
         } else {
             res.send({ error: 'You don\'t have permission!' });

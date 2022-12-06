@@ -57,7 +57,7 @@ export default class AdminUserPage extends AdminPage {
                     if (this.state.types.length) {
                         T.get('/api/users/all', { types: result.data }, res => {
                             if (res.error) {
-                                T.notify('Lỗi lấy dữ liệu định danh', 'danger');
+                                T.notify(res.error.message || 'Lỗi lấy dữ liệu định danh', 'danger');
                             } else {
                                 this.setState({ items: res.items, logs: res.logs });
                             }

@@ -24,18 +24,9 @@ module.exports = (app) => {
 
         getAllDistinct: async () => {
             return await model.aggregate([
-                { '$sort': { 'time': -1 } },
-                {
-                    '$group': {
-                        '_id': '$method',
-                        'doc': { '$first': '$$ROOT' }
-                    }
-                },
-                {
-                    '$replaceRoot': {
-                        'newRoot': '$doc'
-                    }
-                }
+                { $sort: { 'time': -1 } },
+                { $group: { _id: { method: '$method', uid: '$uid', }, doc: { $first: '$$ROOT' } } },
+                { $project: { _id: 0, uid: '$doc.uid', method: '$doc.method', time: '$doc.time' } }
             ]);
             // return await model.find(condition || {}).sort({ time: 1 }).select().exec();
         },

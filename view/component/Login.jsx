@@ -36,7 +36,10 @@ class LoginPage extends React.Component {
                 if (result.error) {
                     errorMessage.html('Xác thực thất bại');
                 } else {
-                    window.location.pathname = '/dashboard';
+                    let session = result.session,
+                        type = session.type;
+                    if (type == 'admin') window.location.pathname = '/dashboard';
+                    else window.location.pathname = '/user';
                 }
             });
         }
@@ -70,7 +73,7 @@ class LoginPage extends React.Component {
                                             <span className='form-bar' />
                                         </div>
                                         <p ref={this.errorMessage} className='text-danger'></p>
-                                        <div className="row m-t-25 text-left">
+                                        {/* <div className="row m-t-25 text-left">
                                             <div className="col-12">
                                                 <div className="checkbox-fade fade-in-primary d-">
                                                     <label>
@@ -83,7 +86,7 @@ class LoginPage extends React.Component {
                                                     <a href="auth-reset-password.htm" className="text-right f-w-600"> Forgot Password?</a>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> */}
                                         <div className='row m-t-30'>
                                             <div className='col-md-12'>
                                                 <button ref={this.btnSend} type='button' className='btn btn-primary btn-md btn-block waves-effect waves-light text-center m-b-20' onClick={this.onSubmit}>

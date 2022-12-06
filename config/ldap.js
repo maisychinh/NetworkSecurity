@@ -53,7 +53,7 @@ module.exports = (app, appConfig) => {
                         filter: `(&(objectClass=inetOrgPerson)(mail=${mail}))`,
                         scope: 'sub',
                         client: '*',
-                        attributes: ['mail', 'uid', 'objectClass']
+                        attributes: ['mail', 'uid', 'objectClass', 'cn', 'sn']
                     }, (error, result) => {
                         if (error) {
                             console.log('Error: Search =>', error);
@@ -96,7 +96,7 @@ module.exports = (app, appConfig) => {
                             ldapOpts: { url: `ldap://${appConfig.ldap.ip}:${appConfig.ldap.port}` },
                             userDn, userPassword: password,
                         });
-                        if (isValidUser) return checkUser.uid;
+                        if (isValidUser) return checkUser;
                         else return false;
                     }
                 },

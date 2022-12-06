@@ -5,8 +5,9 @@ module.exports = app => {
     );
 
     app.get('/', app.templates.login);
+    app.get('/user', app.permission.orCheck('ou=staff', 'ou=student', 'ou=outsider'), app.templates.admin);
 
-    app.get('/dashboard', app.templates.admin);
+    app.get('/dashboard', app.permission.check('ou=admin'), app.templates.admin);
 
     // API ------------------------------------------------------------------------------------------------------------------------------------------
     app.get('/api/system', async (req, res) => {
