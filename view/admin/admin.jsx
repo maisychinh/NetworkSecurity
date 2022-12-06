@@ -7,15 +7,8 @@ import { connect, Provider } from 'react-redux';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
-
-// import { getSystemState, updateSystemState } from 'modules/_default/_init/redux';
-import { getSystemState, logout } from 'modules/_default/_init/redux';
-// import { changeUser } from 'modules/_default/fwUser/redux';
-
-// import Loadable from 'react-loadable';
-// import Loading from 'view/component/Loading';
 import AdminHeader from '../component/AdminHeader';
-
+import { logout } from 'modules/_default/_init/redux';
 // Load modules -------------------------------------------------------------------------------------------------------------------------------------
 import { modules } from './modules.jsx';
 const reducers = {}, reducerContainer = {}, routeMapper = {},
@@ -45,23 +38,7 @@ class App extends React.Component {
     state = { routes: [] };
     componentDidMount() {
         const routes = Object.keys(routeMapper).sort().reverse().map(key => routeMapper[key]);
-        // this.setState({ routes });
-        this.props.getSystemState(() => this.setState({ routes }));
-
-        // this.props.getSystemState(() => {
-        //     T.socket.emit('system:join');
-        //     this.setState({ routes });
-        // });
-
-        // T.socket.on('user-changed', user => {
-        //     if (this.props.system && this.props.system.user && this.props.system.user._id == user._id) {
-        //         store.dispatch(updateSystemState({ user: Object.assign({}, this.props.system.user, user) }));
-        //     }
-        //     store.dispatch(changeUser(user));
-        // });
-
-        // T.socket.on('debug-user-changed', user => store.dispatch(updateSystemState({ user })));
-        // T.socket.on('debug-role-changed', roles => this.props.system && this.props.system.isDebug && this.props.updateSystemState({ roles }));
+        this.setState({ routes });
     }
 
     render() {
@@ -77,7 +54,6 @@ class App extends React.Component {
                                 <div className='pcoded-content'>
                                     <Switch>
                                         {this.state.routes}
-                                        {/* <Route path='**' component={Loadable({ loading: Loading, loader: () => import('view/component/MessagePage') })} /> */}
                                     </Switch>
                                 </div>
                             </div>
@@ -89,5 +65,5 @@ class App extends React.Component {
     }
 }
 
-const Main = connect(state => ({ system: state.system }), { getSystemState, logout })(App);
+const Main = connect(state => ({ system: state.system }), { logout })(App);
 ReactDOM.render(<Provider store={store}><Main /></Provider>, document.getElementById('pcoded'));

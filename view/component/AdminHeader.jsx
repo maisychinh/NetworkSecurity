@@ -179,131 +179,18 @@ class AdminHeader extends React.Component {
                                     <i className='feather icon-maximize full-screen' />
                                 </a>
                             </li>
-                        </ul>
-                        <ul className='nav-right'>
-                            {/* <li className='header-notification'>
-                                <div className='dropdown-primary dropdown'>
-                                    <div className='dropdown-toggle' data-toggle='dropdown'>
-                                        <i className='feather icon-bell' />
-                                        <span className='badge bg-c-pink'>5</span>
-                                    </div>
-                                    <ul className='show-notification notification-view dropdown-menu' data-dropdown-in='fadeIn' data-dropdown-out='fadeOut'>
-                                        <li>
-                                            <h6>Notifications</h6>
-                                            <label className='label label-danger'>New</label>
-                                        </li>
-                                        <li>
-                                            <div className='media'>
-                                                <img className='d-flex align-self-center img-radius' src='/admin/assets/images/avatar-4.jpg' alt='Generic placeholder image' />
-                                                <div className='media-body'>
-                                                    <h5 className='notification-user'>John Doe</h5>
-                                                    <p className='notification-msg'>Lorem ipsum dolor sit amet, consectetuer elit.</p>
-                                                    <span className='notification-time'>30 minutes ago</span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div className='media'>
-                                                <img className='d-flex align-self-center img-radius' src='/admin/assets/images/avatar-3.jpg' alt='Generic placeholder image' />
-                                                <div className='media-body'>
-                                                    <h5 className='notification-user'>Joseph William</h5>
-                                                    <p className='notification-msg'>Lorem ipsum dolor sit amet, consectetuer elit.</p>
-                                                    <span className='notification-time'>30 minutes ago</span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div className='media'>
-                                                <img className='d-flex align-self-center img-radius' src='/admin/assets/images/avatar-4.jpg' alt='Generic placeholder image' />
-                                                <div className='media-body'>
-                                                    <h5 className='notification-user'>Sara Soudein</h5>
-                                                    <p className='notification-msg'>Lorem ipsum dolor sit amet, consectetuer elit.</p>
-                                                    <span className='notification-time'>30 minutes ago</span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li> */}
-                            {/* <li className='user-profile header-notification'>
-                                <div className='dropdown-primary dropdown'>
-                                    <div className='dropdown-toggle' data-toggle='dropdown'>
-                                        <img src={user.image} className='img-radius' alt='avatar' />
-                                        <span>{user.firstName}</span>
-                                        <i className='feather icon-chevron-down' />
-                                    </div>
-                                    <ul className='show-notification profile-notification dropdown-menu' data-dropdown-in='fadeIn' data-dropdown-out='fadeOut'>
-                                        <li>
-                                            <a href='#'>
-                                                <i className='feather icon-settings' /> Settings
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href='user-profile.htm'>
-                                                <i className='feather icon-user' /> Profile
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href='email-inbox.htm'>
-                                                <i className='feather icon-mail' /> My Messages
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href='auth-lock-screen.htm'>
-                                                <i className='feather icon-lock' /> Lock Screen
-                                            </a>
-                                        </li>
-                                        <li onClick={this.logout}>
-                                            <a href='#' >
-                                                <i className='feather icon-log-out' /> Logout
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li> */}
+                            <li>
+                                <a href='#' onClick={this.logout} >
+                                    <i className='feather icon-log-out' /> Logout
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
             </nav>
         );
-        // return <>
-        //     <header className='app-header' >
-        //         <a className='app-header__logo' href='/'>Bầu cử</a>
-        //         <a className='app-sidebar__toggle' href='#' data-toggle='sidebar' aria-label='Hide Sidebar' />
-        //         <ul className='app-nav'>
-        //             {isAdmin || isDebug ?
-        //                 <li className='app-nav__item' style={{ whiteSpace: 'nowrap' }}>
-        //                     <a href='#' style={{ color: 'white' }} onClick={this.showDebugModal}>Switch user</a>
-        //                 </li> : null}
-        //             <li className='app-search' style={{ display: 'none' }}>
-        //                 <input ref={e => this.searchBox = e} className='app-search__input' type='search' placeholder='Tìm kiếm' onKeyUp={e => e.keyCode == 13 && this.search(e)} />
-        //                 <button className='app-search__button' onClick={this.search}><i className='fa fa-search' /></button>
-        //             </li>
-        //             <li ref={e => this.advancedSearch = e} style={{ display: 'none' }} onClick={this.onAdvanceSearch}>
-        //                 <a className='app-nav__item' href='#'>
-        //                     <i className='fa fa-search-plus fa-lg' />
-        //                 </a>
-        //             </li>
-        //             {this.state.showContact ? this.renderContact(currentPermissions) : null}
-        //             <li>
-        //                 <Link className='app-nav__item' to='/user'>
-        //                     <i className='fa fa-user fa-lg' />
-        //                 </Link>
-        //             </li>
-        //             <li>
-        //                 <a className='app-nav__item' href='#' onClick={this.logout}>
-        //                     <i className='fa fa-power-off fa-lg' style={{ color: 'red' }} />
-        //                 </a>
-        //             </li>
-        //         </ul>
-        //     </header>
-        //     <ContactModal ref={e => this.contactModal = e} />
-        //     <DebugModal ref={e => this.debugModal = e} switchUser={this.props.switchUser} updateSystemState={this.props.updateSystemState} />
-        // </>;
     }
 }
-
-// const mapStateToProps = state => ({ system: state.system, contact: state.contact, role: state.framework.role });
 const mapStateToProps = state => ({ system: state.system });
 const mapActionsToProps = {};
 export default connect(mapStateToProps, mapActionsToProps)(AdminHeader);

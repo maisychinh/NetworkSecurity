@@ -1,7 +1,7 @@
 module.exports = app => {
 
     // API ------------------------------------------------------------------------------------------------------------------------------------
-    app.get('/api/users/all', app.permission.check('ou=admin'), async (req, res) => {
+    app.get('/api/users/all', app.permission.check('admin'), async (req, res) => {
         try {
             console.log(req.session.user);
             let types = req.query.types;
@@ -16,7 +16,7 @@ module.exports = app => {
         }
     });
 
-    app.post('/api/users', app.permission.check('ou=admin'), async (req, res) => {
+    app.post('/api/users', app.permission.check('admin'), async (req, res) => {
         try {
             const data = req.body.data,
                 { type, uid, mail, password, cn, sn } = data;
@@ -28,7 +28,7 @@ module.exports = app => {
         }
     });
 
-    app.put('/api/users', app.permission.check('ou=admin'), async (req, res) => {
+    app.put('/api/users', app.permission.check('admin'), async (req, res) => {
         try {
             let { userId, changes } = req.body,
                 { type } = changes;
@@ -42,7 +42,7 @@ module.exports = app => {
         }
     });
 
-    app.delete('/api/users/:type/:userId', app.permission.check('ou=admin'), async (req, res) => {
+    app.delete('/api/users/:type/:userId', app.permission.check('admin'), async (req, res) => {
         try {
             let { type, userId } = req.params;
             await app.ldap.remove(type, userId);
@@ -62,7 +62,7 @@ module.exports = app => {
                 req.session.user = {
                     email: validUser.mail,
                     uid: validUser.uid,
-                    type: validUser.dn.split(',')[1]
+                    type: validUser.dn.split(',')[1].replace('ou=', '')
                 };
                 res.status(200).json({ status: 'success', session: req.session.user });
             } else {
@@ -74,7 +74,7 @@ module.exports = app => {
         }
     });
 
-    app.get('/api/user/info', app.permission.orCheck('ou=staff', 'ou=student', 'ou=outsider'), async (req, res) => {
+    app.get('/api/user/info', app.permission.orCheck('staff', 'student', 'outsider'), async (req, res) => {
         try {
             const user = req.session.user;
             const data = await app.ldap.search(user.email);

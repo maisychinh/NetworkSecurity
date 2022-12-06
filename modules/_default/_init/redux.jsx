@@ -49,20 +49,6 @@ export function getFooterSystem(done) {
     };
 }
 
-export function getSystemState(done) {
-    return dispatch => {
-        const url = '/api/state';
-        const path = window.location.pathname, link = path.endsWith('/') && path.length > 1 ? path.substring(0, path.length - 1) : path;
-        T.get(url, { template: T.template, link }, data => {
-            data && dispatch({ type: UPDATE_SYSTEM_STATE, state: data });
-            done && done(data);
-        }, () => {
-            T.notify('Lấy thông tin hệ thống bị lỗi!', 'danger');
-            done && done();
-        });
-    };
-}
-
 export function login(data, done) {
     return () => {
         T.post('/login', data, res => {
@@ -85,24 +71,13 @@ export function logout(config) {
     if (config.title == undefined) config.title = 'Đăng xuất';
     if (config.message == undefined) config.message = 'Bạn có chắc bạn muốn đăng xuất?';
     if (config.errorMessage == undefined) config.errorMessage = 'Đăng xuất bị lỗi!';
-
-    return dispatch => {
-        // T.confirm(config.title, config.message, true, isConfirm => {
-        // isConfirm && 
-        T.post('/logout', {},
+    return () => T.confirm(config.title, config.message, 'warning', true, isConfirm => {
+        isConfirm && T.post('/logout', {},
             () => {
-                dispatch({ type: UPDATE_SYSTEM_STATE, state: { user: null } });
-                const pathname = window.location.pathname;
-                if (pathname.startsWith('/user')) {
-                    window.location = '/';
-                } else if (config.done) {
-                    config.done();
-                }
+                window.location = '/';
             },
-            // error => T.notify(config.errorMessage, 'danger')
         );
-        // });
-    };
+    });
 }
 
 export function updateProfile(changes) {
@@ -121,7 +96,6 @@ export function updateProfile(changes) {
                         user: { ...currentSystem.user, ...res.user }
                     }
                 });
-                dispatch(getSystemState());
             }
         }, () => T.notify('Cập nhật thông tin cá nhân của bạn bị lỗi!', 'danger'));
     };
