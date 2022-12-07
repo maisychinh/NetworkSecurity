@@ -3,15 +3,16 @@ import { AdminModal, AdminPage, FormDatePicker, FormSelect, FormTabs, FormTextBo
 import T from 'view/js/common';
 
 class LogModal extends AdminModal {
+    state = { logs: [], changePassLog: [] }
     onShow = (uid) => {
         T.get('/api/admin/users/logs', { uid }, result => {
-            this.setState({ logs: result.logs, data: result.data }, () => {
+            this.setState({ logs: result.logs, data: result.data, changePassLog: result.changePassLog }, () => {
                 this.lastPinTime.value(result.data?.lastModified || '');
             });
         });
     }
     render() {
-        const logs = this.state.logs || [];
+        const { logs, changePassLog } = this.state;
         const table = renderTable({
             getDataSource: () => logs,
             renderHead: () => <tr>
@@ -24,15 +25,43 @@ class LogModal extends AdminModal {
                 <TableCell content={item.method} />
                 <TableCell type='date' dateFormat={'HH:MM:ss dd/mm/yyyy'} content={item.time} />
             </tr>
-        });
+        }),
+            tableChange = renderTable({
+                getDataSource: () => changePassLog,
+                renderHead: () => <tr>
+                    <th style={{ width: 'auto' }}>#</th>
+                    <th style={{ width: '50%' }}>Time</th>
+                    <th style={{ width: '50%' }}>Status</th>
+                </tr>,
+                renderRow: (item, index) => <tr key={index}>
+                    <TableCell content={index + 1} />
+                    <TableCell type='date' dateFormat={'HH:MM:ss dd/mm/yyyy'} content={item.time} />
+                    <TableCell content={item.success ? <span className='text-primary'><i className='icofont icofont-check' />Success</span> : <span className='text-danger'><i className='icofont icofont-times' />Fail</span>} />
+                </tr>
+            });
         return this.renderModal({
             title: 'Log người dùng',
-            body: <div className='row'>
-                <FormDatePicker className='col-md-12' type='time' ref={e => this.lastPinTime = e} label='Lần cuối cập nhật mã PIN' readOnly />
-                <div className='col-md-12' style={{ height: '70vh', overflow: 'scroll' }}>
-                    {table}
-                </div>
-            </div>
+            body: <>
+                <FormTabs tabs={[
+                    {
+                        title: 'Xác thực', component:
+                            <div className='row'>
+                                <FormDatePicker className='col-md-12' type='time' ref={e => this.lastPinTime = e} label='Lần cuối cập nhật mã PIN' readOnly />
+                                <div className='col-md-12' style={{ height: '60vh', overflow: 'scroll' }}>
+                                    {table}
+                                </div>
+                            </div>
+                    }, {
+                        title: 'Đổi mật khẩu', component:
+                            <div className='row'>
+                                <div className='col-md-12' style={{ height: '60vh', overflow: 'scroll' }}>
+                                    {tableChange}
+                                </div>
+                            </div>
+                    }]
+                } />
+
+            </>
         });
     }
 }

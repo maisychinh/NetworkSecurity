@@ -1,9 +1,34 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { AdminModal, AdminPage, FormTextBox } from 'view/component/AdminPage';
+import { AdminModal, AdminPage, FormTextBox, getValue } from 'view/component/AdminPage';
 import T from 'view/js/common';
 import PinInput from 'react-pin-input';
 
+class ChangePassword extends AdminModal {
+
+    onSubmit = () => {
+        let data = {
+            oldPassword: getValue(this.oldPassword),
+            newPassword: getValue(this.newPassword),
+            newPasswordRecap: getValue(this.newPasswordRecap)
+        };
+        if (data.newPassword !== data.newPasswordRecap) {
+            T.notify('Nhập lại mật khẩu mới không đúng', 'danger');
+        } else {
+            this.props.changePassword(data, this.hide);
+        }
+    }
+    render() {
+        return this.renderModal({
+            title: 'Đổi mật khẩu',
+            body: <div className='row'>
+                <FormTextBox className='col-md-12' type='password' ref={e => this.oldPassword = e} label='Nhập mật khẩu cũ' required />
+                <FormTextBox className='col-md-12' type='password' ref={e => this.newPassword = e} label='Nhập mật khẩu mới' required />
+                <FormTextBox className='col-md-12' type='password' ref={e => this.newPasswordRecap = e} label='Nhập laị mật khẩu mới' required />
+            </div>
+        });
+    }
+}
 class PINModal extends AdminModal {
     componentDidMount() {
         this.onShown(() => this.pin.focus());
@@ -76,6 +101,19 @@ export class UserPage extends AdminPage {
         });
     }
 
+    changePassword = (data, done) => {
+        console.log(data);
+        T.post('/api/user/change-password', { data }, result => {
+            if (result.error) {
+                T.notify(result.error.message || 'Thay đổi thất bại!', 'danger');
+                console.error(result.error);
+            } else {
+                T.notify('Thay đổi thành công', 'success');
+                done && done();
+            }
+        });
+    }
+
     render() {
         return this.renderPage({
             title: 'Trang cá nhân',
@@ -106,13 +144,14 @@ export class UserPage extends AdminPage {
                                     <a href='#' className='text-primary' onClick={e => e.preventDefault() || this.modal.show(this.state.uid)} >{this.state.pin ? 'Cập nhật' : 'Cài đặt'} mã PIN</a>
                                 </li>
                                 <li className='text-primary'>
-                                    <a href='#' className='text-primary' onClick={e => e.preventDefault() || this.modal.show(this.state.uid)} >Đổi mật khẩu</a>
+                                    <a href='#' className='text-primary' onClick={e => e.preventDefault() || this.changePassModal.show(this.state.uid)} >Đổi mật khẩu</a>
                                 </li>
                             </ol>
                         </div>
                     </div>
                 </div>
                 <PINModal ref={e => this.modal = e} create={this.createPin} />
+                <ChangePassword ref={e => this.changePassModal = e} changePassword={this.changePassword} />
             </>,
         });
     }
