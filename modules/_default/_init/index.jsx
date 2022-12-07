@@ -7,8 +7,8 @@ export default {
     redux: { system },
     routes: [
         {
-            path: '/register',
-            component: Loadable({ loading: Loading, loader: () => import('../../../view/component/RegisterPage') })
+            path: '/pin-authen',
+            component: Loadable({ loading: Loading, loader: () => import('../../../view/component/PinAuthen') })
         },
         // {
         //     path: '/',

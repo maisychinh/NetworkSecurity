@@ -1,3 +1,4 @@
+import user from 'modules/_default/fwUser/controller/user';
 import React from 'react';
 import { connect } from 'react-redux';
 import T from 'view/js/common';
@@ -12,8 +13,27 @@ class LoginPage extends React.Component {
         this.errorMessage = React.createRef();
     }
 
+    componentDidMount() {
+        if (this.props.system && this.props.system.user) {
+            let session = this.props.system.user,
+                type = session.type;
+            if (type == 'admin') window.location.pathname = '/dashboard';
+            else {
+                if (user.authen) {
+                    window.location.pathname = '/user';
+                } else {
+                    window.location.pathname = '/pin-authen';
+                }
+            }
+        }
+    }
+
     componentDidUpdate() {
         if (this.props.system && this.props.system.user) window.location = '/user';
+    }
+
+    rand(items) {
+        return items[~~(items.length * Math.random())];
     }
 
     onSubmit = (e) => {
@@ -36,10 +56,17 @@ class LoginPage extends React.Component {
                 if (result.error) {
                     errorMessage.html('Xác thực thất bại');
                 } else {
-                    let session = result.session,
-                        type = session.type;
-                    if (type == 'admin') window.location.pathname = '/dashboard';
-                    else window.location.pathname = '/user';
+                    if (result && result.session) {
+                        let session = result.session,
+                            type = session.type;
+                        if (type == 'admin') window.location.pathname = '/dashboard';
+                        else {
+                            window.location.pathname = '/user';
+                        }
+                    } else {
+                        window.location.pathname = '/pin-authen';
+                    }
+
                 }
             });
         }

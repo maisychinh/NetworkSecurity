@@ -171,3 +171,16 @@ export function clearSession(sessionName, done) {
         T.delete(url, { sessionName }, () => done && done());
     };
 }
+export function getSystemState(done) {
+    return dispatch => {
+        const url = '/api/state';
+        const path = window.location.pathname, link = path.endsWith('/') && path.length > 1 ? path.substring(0, path.length - 1) : path;
+        T.get(url, { template: T.template, link }, data => {
+            data && dispatch({ type: UPDATE_SYSTEM_STATE, state: data });
+            done && done(data);
+        }, () => {
+            T.notify('Lấy thông tin hệ thống bị lỗi!', 'danger');
+            done && done();
+        });
+    };
+}

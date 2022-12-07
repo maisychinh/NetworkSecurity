@@ -5,6 +5,7 @@ module.exports = app => {
     );
 
     app.get('/', app.templates.login);
+    app.get('/pin-authen', app.templates.login);
     app.get('/user', app.permission.orCheck('staff', 'student', 'outsider'), app.templates.admin);
 
     app.get('/dashboard', app.permission.check('admin'), app.templates.admin);
@@ -23,5 +24,9 @@ module.exports = app => {
         req.session.destroy(() => {
             return res.status(200).json({ status: 'success', session: null });
         });
+    });
+
+    app.get('/api/state', (req, res) => {
+        res.send({ user: req.session?.user || null });
     });
 };

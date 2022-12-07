@@ -3,6 +3,7 @@ module.exports = app => {
         uid: String,
         gender: { type: String, enum: ['Male', 'Female', 'Unknow'], default: 'Male' },
         pinCode: String,
+        lastModified: Number
     });
 
     const model = app.database.mongoDB.model('user_info', schema);
@@ -14,6 +15,8 @@ module.exports = app => {
                 const newData = await model.create(data);
                 await newData.save();
                 return { user: newData };
+            } else {
+                return await model.findOneAndUpdate({ _id: checkUser._id }, { $set: data }, { new: true }).exec();
             }
         },
 
@@ -24,5 +27,8 @@ module.exports = app => {
                 return await model.findOne(condition).select().exec();
             }
         },
+
+        hashPassword: (password) => app.crypt.hashSync(password, app.crypt.genSaltSync(8), null),
+        equalPassword: (password, encryptedPassword) => app.crypt.compareSync(password, encryptedPassword),
     };
 };

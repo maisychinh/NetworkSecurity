@@ -9,6 +9,7 @@ import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import AdminHeader from '../component/AdminHeader';
 import { logout } from 'modules/_default/_init/redux';
+import { getSystemState } from 'modules/_default/_init/redux';
 // Load modules -------------------------------------------------------------------------------------------------------------------------------------
 import { modules } from './modules.jsx';
 const reducers = {}, reducerContainer = {}, routeMapper = {},
@@ -29,7 +30,7 @@ modules.forEach(module => {
 Object.keys(reducerContainer).forEach(key => reducers[key] = combineReducers(reducerContainer[key]));
 
 const store = createStore(combineReducers(reducers), {}, composeWithDevTools(applyMiddleware(thunk)));
-
+store.dispatch(getSystemState());
 T.template = 'admin';
 window.T = T;
 

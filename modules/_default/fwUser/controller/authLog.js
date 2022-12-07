@@ -28,7 +28,6 @@ module.exports = (app) => {
                 { $group: { _id: { method: '$method', uid: '$uid', }, doc: { $first: '$$ROOT' } } },
                 { $project: { _id: 0, uid: '$doc.uid', method: '$doc.method', time: '$doc.time' } }
             ]);
-            // return await model.find(condition || {}).sort({ time: 1 }).select().exec();
         },
     };
 

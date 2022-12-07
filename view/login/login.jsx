@@ -6,8 +6,7 @@ import { connect, Provider } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { register, login, forgotPassword, logout } from 'modules/_default/_init/redux';
-
+import { getSystemState } from 'modules/_default/_init/redux';
 // Load modules -------------------------------------------------------------------------------------------------------------------------------------
 import { modules } from './modules';
 
@@ -28,6 +27,7 @@ modules.forEach(module => {
 });
 Object.keys(reducerContainer).forEach(key => reducers[key] = combineReducers(reducerContainer[key]));
 const store = createStore(combineReducers(reducers), {}, composeWithDevTools(applyMiddleware(thunk)));
+store.dispatch(getSystemState());
 T.template = 'login';
 window.T = T;
 
@@ -52,5 +52,5 @@ class App extends React.Component {
     }
 }
 
-const Main = connect(state => ({ system: state.system }), { register, login, forgotPassword, logout })(App);
+const Main = connect(state => ({ system: state.system }), {})(App);
 ReactDOM.render(<Provider store={store}><Main /></Provider>, document.getElementById('pcoded'));
