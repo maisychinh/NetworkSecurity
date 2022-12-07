@@ -36,7 +36,7 @@ class LogModal extends AdminModal {
                 renderRow: (item, index) => <tr key={index}>
                     <TableCell content={index + 1} />
                     <TableCell type='date' dateFormat={'HH:MM:ss dd/mm/yyyy'} content={item.time} />
-                    <TableCell content={item.success ? <span className='text-primary'><i className='icofont icofont-check' />Success</span> : <span className='text-danger'><i className='icofont icofont-times' />Fail</span>} />
+                    <TableCell content={item.success ? <span className='text-primary'><i className='icofont icofont-check' />Success</span> : <span className='text-danger'><i className='icofont icofont-close' />Fail</span>} />
                 </tr>
             });
         return this.renderModal({
@@ -108,6 +108,23 @@ export default class AdminUserPage extends AdminPage {
     state = { items: [] }
     componentDidMount() {
         T.ready();
+        T.onSearch = (searchText) => {
+            if (searchText) {
+                T.get('/api/admin/users/search', { searchText }, result => {
+                    if (!result.data) T.notify('Không tìm thấy định danh phù hợp', 'warning');
+                    else {
+                        T.notify('Tìm thành công định danh', 'success');
+                        this.setState({ searchResult: result }, () => {
+                            let { data } = result;
+                            // { dn, uid, cn, sn, mail } = data;
+                            ['mail', 'dn', 'uid', 'cn', 'sn'].forEach(element => this[element].value(data[element]));
+                        });
+                    }
+                });
+            } else {
+                this.getData();
+            }
+        };
         this.getData();
     }
 
@@ -171,6 +188,17 @@ export default class AdminUserPage extends AdminPage {
 
     render() {
         let { items, types, logs } = this.state;
+        const elementSearch = () => <div className='card'>
+            <div className='card-body'>
+                <div className='row'>
+                    <FormTextBox ref={e => this.uid = e} label='UID' className='col-md-6' disabled />
+                    <FormTextBox ref={e => this.mail = e} label='Email' className='col-md-6' disabled />
+                    <FormTextBox ref={e => this.cn = e} label='Common name' className='col-md-3' disabled />
+                    <FormTextBox ref={e => this.sn = e} label='Surname' className='col-md-3' disabled />
+                    <FormTextBox ref={e => this.dn = e} label='DN' className='col-md-6' disabled />
+                </div>
+            </div>
+        </div>;
         const tableByType = (type) => renderTable({
             emptyTable: 'Chưa có dữ liệu người dùng',
             getDataSource: () => items[type],
@@ -206,6 +234,7 @@ export default class AdminUserPage extends AdminPage {
         return this.renderPage({
             title: 'Dashboard',
             content: <>
+                {this.state.searchResult && elementSearch()}
                 {types && types.length ? <FormTabs ref={e => this.tab = e} tabs={
                     types.map(type => ({
                         title: type,

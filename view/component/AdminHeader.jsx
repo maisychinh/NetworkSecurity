@@ -88,7 +88,7 @@ class AdminHeader extends React.Component {
     logout = (e) => e.preventDefault() || this.props.logout();
 
 
-    search = (e) => e.preventDefault() || T.onSearch && T.onSearch(this.searchBox.value);
+    search = () => T.onSearch && T.onSearch(this.state.searchText);
 
     onAdvanceSearch = (e) => {
         e.preventDefault();
@@ -169,8 +169,8 @@ class AdminHeader extends React.Component {
                                 <div className='main-search morphsearch-search'>
                                     <div className='input-group'>
                                         <span className='input-group-addon search-close'><i className='feather icon-x' /></span>
-                                        <input type='text' className='form-control' />
-                                        <span className='input-group-addon search-btn'><i className='feather icon-search' /></span>
+                                        <input type='text' className='form-control' onChange={e => this.setState({ searchText: e.target.value })} />
+                                        <span className='input-group-addon search-btn'><i className='feather icon-search' onClick={e => e.preventDefault() || this.search()} /></span>
                                     </div>
                                 </div>
                             </li>

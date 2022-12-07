@@ -47,10 +47,9 @@ module.exports = (app, appConfig) => {
 
                 }),
 
-                search: (mail, done) => new Promise(resolve => {
-                    // type = 'staff' || 'student' || 'outsider'
+                search: (username, done) => new Promise(resolve => {
                     client.search('dc=ussh,dc=edu,dc=vn', {
-                        filter: `(&(objectClass=inetOrgPerson)(mail=${mail}))`,
+                        filter: `(&(objectClass=inetOrgPerson)(|(mail=${username})(uid=${username})))`,
                         scope: 'sub',
                         client: '*',
                         attributes: ['mail', 'uid', 'objectClass', 'cn', 'sn']

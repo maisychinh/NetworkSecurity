@@ -15,6 +15,25 @@ module.exports = app => {
         }
     });
 
+    app.get('/api/admin/users/search', app.permission.check('admin'), async (req, res) => {
+        try {
+            const data = await app.ldap.search(req.query.searchText);
+            if (!data) { res.send({ error: 'No user' }); }
+            else {
+                let { uid } = data;
+                const [authLogs, userData, changePassLog] = await Promise.all([
+                    app.model.authLog.getAll({ uid }),
+                    app.model.user.get({ uid }),
+                    app.model.changePassLog.getAll({ uid })
+                ]);
+                res.send({ authLogs, userData, changePassLog, data });
+            }
+        } catch (error) {
+            console.log(error);
+            res.send({ error });
+        }
+    });
+
     app.get('/api/admin/users/logs', app.permission.check('admin'), async (req, res) => {
         try {
             let uid = req.query.uid;
