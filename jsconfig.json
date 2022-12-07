@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "module": "commonJS",
+        "jsx": "react",
+        "target": "es6",
+        "paths": {
+            "view/*": ["view/*"],
+            "modules/*": ["modules/*"],
+            "asset/*": ["asset/*"],
+            "config/*": ["config/*"]
+        }
+    },
+    "include": ["view", "modules", "asset", "config"]
+}

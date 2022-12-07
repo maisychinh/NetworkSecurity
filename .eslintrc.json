@@ -1,0 +1,63 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true
+    },
+    "globals": {
+        "T": "writable",
+        "$": "writable",
+        "CKEDITOR": "writable",
+        "Chart": "writable",
+        "Switchery": "writable",
+        "PcodedMenu": "writable"
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended"
+    ],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 12,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react"
+    ],
+    "parser": "babel-eslint",
+    "ignorePatterns": [
+        "view/js/*",
+        "public/*",
+        "asset/*",
+        "asset/**"
+    ],
+    "rules": {
+        "no-constant-condition": "off",
+        "no-unused-vars": [
+            "error"
+        ],
+        "indent": [
+            "off"
+        ],
+        "no-var": [
+            "error"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "react/prop-types": "off",
+        "react/display-name": [
+            0
+        ],
+        "no-useless-escape": "off",
+        "no-prototype-builtins": "off",
+        "react/no-unknown-property": "off"
+    }
+}

@@ -1,0 +1,36 @@
+doctype html
+html(lang='vi')
+    head
+        meta(charset='utf-8')
+        title #{htmlWebpackPlugin.options.title}
+        meta(name='viewport', content='width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui')
+        meta(content=htmlWebpackPlugin.options.description name='description')
+        link(href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet')
+        link(rel='stylesheet' type='text/css' href='/admin/bower_components/bootstrap/css/bootstrap.min.css')
+        link(rel='stylesheet' type='text/css' href='/admin/assets/icon/font-awesome/css/font-awesome.min.css')
+        link(rel='stylesheet' type='text/css' href='/admin/assets/icon/feather/css/feather.css')
+        link(rel='stylesheet' type='text/css' href='/admin/assets/icon/icofont/css/icofont.css')
+        link(rel='stylesheet' type='text/css' href='/admin/bower_components/switchery/css/switchery.min.css')
+        link(rel='stylesheet' type='text/css' href='/admin/bower_components/select2/css/select2.min.css')
+        link(rel='stylesheet' type='text/css' href='/admin/assets/pages/notification/notification.css')
+        link(rel='stylesheet' type='text/css' href='/admin/bower_components/animate.css/css/animate.css')
+        link(rel='stylesheet' type='text/css' href='/admin/assets/css/style.css')
+        link(rel='stylesheet' type='text/css' href='/admin/assets/css/jquery.mCustomScrollbar.css')
+    body
+        #pcoded.pcoded
+        script(type='text/javascript' src='/admin/bower_components/jquery/js/jquery.min.js')
+        script(type='text/javascript' src='/admin/bower_components/jquery-ui/js/jquery-ui.min.js')
+        script(type='text/javascript' src='/admin/bower_components/popper.js/js/popper.min.js')
+        script(type='text/javascript' src='/admin/bower_components/bootstrap/js/bootstrap.min.js')
+        script(type='text/javascript' src='/admin/bower_components/jquery-slimscroll/js/jquery.slimscroll.js')
+        script(type='text/javascript' src='/admin/bower_components/modernizr/js/modernizr.js')
+        script(src='/admin/assets/js/jquery.mCustomScrollbar.concat.min.js')
+        script(type='text/javascript' src='/admin/assets/js/SmoothScroll.js')
+        script(type='text/javascript' src='/admin/assets/js/bootstrap-growl.min.js')
+        script(defer src='/admin/assets/js/pcoded.min.js')
+        script(src='/admin/assets/js/vartical-layout.min.js')
+        script(type='text/javascript' src='/admin/bower_components/switchery/js/switchery.min.js')
+        script(type='text/javascript' src='/admin/bower_components/select2/js/select2.full.min.js')
+        each item in htmlWebpackPlugin.files.js
+            if item.search(/\/js\/admin-?.*.js/) == 0
+                script(type='text/javascript' src=item)
