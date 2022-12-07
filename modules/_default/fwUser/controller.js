@@ -1,9 +1,8 @@
 module.exports = app => {
 
     // API ------------------------------------------------------------------------------------------------------------------------------------
-    app.get('/api/users/all', app.permission.check('admin'), async (req, res) => {
+    app.get('/api/admin/users/all', app.permission.check('admin'), async (req, res) => {
         try {
-            console.log(req.session.user);
             let types = req.query.types;
             const [items, logs] = await Promise.all([
                 app.ldap.getAllUser(types),
@@ -16,7 +15,21 @@ module.exports = app => {
         }
     });
 
-    app.post('/api/users', app.permission.check('admin'), async (req, res) => {
+    app.get('/api/admin/users/logs', app.permission.check('admin'), async (req, res) => {
+        try {
+            let uid = req.query.uid;
+            const [logs, data] = await Promise.all([
+                app.model.authLog.getAll({ uid }),
+                app.model.user.get({ uid })
+            ]);
+            res.send({ logs, data });
+        } catch (error) {
+            console.log(error);
+            res.send({ error });
+        }
+    });
+
+    app.post('/api/admin/users', app.permission.check('admin'), async (req, res) => {
         try {
             const data = req.body.data,
                 { type, uid, mail, password, cn, sn } = data;
@@ -28,7 +41,7 @@ module.exports = app => {
         }
     });
 
-    app.put('/api/users', app.permission.check('admin'), async (req, res) => {
+    app.put('/api/admin/users', app.permission.check('admin'), async (req, res) => {
         try {
             let { userId, changes } = req.body,
                 { type } = changes;
@@ -42,7 +55,7 @@ module.exports = app => {
         }
     });
 
-    app.delete('/api/users/:type/:userId', app.permission.check('admin'), async (req, res) => {
+    app.delete('/api/admin/users/:type/:userId', app.permission.check('admin'), async (req, res) => {
         try {
             let { type, userId } = req.params;
             await app.ldap.remove(type, userId);

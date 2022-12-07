@@ -29,6 +29,10 @@ module.exports = (app) => {
                 { $project: { _id: 0, uid: '$doc.uid', method: '$doc.method', time: '$doc.time' } }
             ]);
         },
+
+        getAll: async (condition) => {
+            return await model.find(condition || {}).sort({ time: -1 }).exec();
+        },
     };
 
 };
