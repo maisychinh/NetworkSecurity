@@ -8,7 +8,7 @@
         "ip": "localhost",
         "port": 10389,
         "username": "uid=admin,ou=system",
-        "password": "helloworld"
+        "password": "secret"
     },
     "db": {
         "mongoDB": {

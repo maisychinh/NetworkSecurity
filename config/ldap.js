@@ -11,7 +11,7 @@ module.exports = (app, appConfig) => {
 
             app.ldap = {
                 getAllGroup: () => new Promise(resolve => {
-                    client.search('dc=ussh,dc=edu,dc=vn', { filter: '(&(ou=*))', scope: 'sub', attributes: ['*'] }, (error, result) => {
+                    client.search('dc=example,dc=com', { filter: '(&(ou=*))', scope: 'sub', attributes: ['*'] }, (error, result) => {
                         if (error) resolve({ error });
                         else {
                             const data = [];
@@ -30,7 +30,7 @@ module.exports = (app, appConfig) => {
                     const items = {};
                     for (let i = 0; i < types.length; i++) {
                         const type = types[i];
-                        client.search(`ou=${type},dc=ussh,dc=edu,dc=vn`, { filter: '(&(uid=*))', scope: 'sub', attributes: ['*'] }, (error, result) => {
+                        client.search(`ou=${type},dc=example,dc=com`, { filter: '(&(uid=*))', scope: 'sub', attributes: ['*'] }, (error, result) => {
                             if (error) reject({ error });
                             else {
                                 const data = [];
@@ -46,9 +46,9 @@ module.exports = (app, appConfig) => {
                     }
 
                 }),
-
+                
                 search: (username, done) => new Promise(resolve => {
-                    client.search('dc=ussh,dc=edu,dc=vn', {
+                    client.search('ou=system', {
                         filter: `(&(objectClass=inetOrgPerson)(|(mail=${username})(uid=${username})))`,
                         scope: 'sub',
                         client: '*',
@@ -105,7 +105,7 @@ module.exports = (app, appConfig) => {
                         cn, sn, objectclass: ['inetOrgPerson', 'organizationalPerson', 'person'], uid: userId,
                         mail, userPassword
                     };
-                    client.add(`uid=${userId},ou=${type},dc=ussh,dc=edu,dc=vn`, entry, (err) => {
+                    client.add(`uid=${userId},ou=${type},dc=example,dc=com`, entry, (err) => {
                         if (err) console.error(err);
                         else {
                             console.log(` - Add ${userId} successfully`);
@@ -120,7 +120,7 @@ module.exports = (app, appConfig) => {
                         let [key, value] = Object.entries(changes)[i];
                         let change = { [key]: value };
                         console.log(change);
-                        client.modify(`uid=${userId},ou=${type},dc=ussh,dc=edu,dc=vn`, new ldap.Change({
+                        client.modify(`uid=${userId},ou=${type},dc=example,dc=com`, new ldap.Change({
                             operation: 'replace',
                             modification: change
                         }), (error, result) => {
@@ -131,7 +131,7 @@ module.exports = (app, appConfig) => {
                 }),
 
                 remove: (type, userId) => new Promise(resolve => {
-                    client.del(`uid=${userId},ou=${type},dc=ussh,dc=edu,dc=vn`, (error, result) => {
+                    client.del(`uid=${userId},ou=${type},dc=example,dc=com`, (error, result) => {
                         if (error) resolve({ error });
                         else resolve({ result });
                     });
