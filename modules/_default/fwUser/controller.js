@@ -1,9 +1,8 @@
 module.exports = app => {
 
     // API ------------------------------------------------------------------------------------------------------------------------------------
-    app.get('/api/users/all', app.permission.check('admin'), async (req, res) => {
+    app.get('/api/admin/users/all', app.permission.check('admin'), async (req, res) => {
         try {
-            console.log(req.session.user);
             let types = req.query.types;
             const [items, logs] = await Promise.all([
                 app.ldap.getAllUser(types),
@@ -16,7 +15,41 @@ module.exports = app => {
         }
     });
 
-    app.post('/api/users', app.permission.check('admin'), async (req, res) => {
+    app.get('/api/admin/users/search', app.permission.check('admin'), async (req, res) => {
+        try {
+            const data = await app.ldap.search(req.query.searchText);
+            if (!data) { res.send({ error: 'No user' }); }
+            else {
+                let { uid } = data;
+                const [authLogs, userData, changePassLog] = await Promise.all([
+                    app.model.authLog.getAll({ uid }),
+                    app.model.user.get({ uid }),
+                    app.model.changePassLog.getAll({ uid })
+                ]);
+                res.send({ authLogs, userData, changePassLog, data });
+            }
+        } catch (error) {
+            console.log(error);
+            res.send({ error });
+        }
+    });
+
+    app.get('/api/admin/users/logs', app.permission.check('admin'), async (req, res) => {
+        try {
+            let uid = req.query.uid;
+            const [logs, data, changePassLog] = await Promise.all([
+                app.model.authLog.getAll({ uid }),
+                app.model.user.get({ uid }),
+                app.model.changePassLog.getAll({ uid })
+            ]);
+            res.send({ logs, data, changePassLog });
+        } catch (error) {
+            console.log(error);
+            res.send({ error });
+        }
+    });
+
+    app.post('/api/admin/users', app.permission.check('admin'), async (req, res) => {
         try {
             const data = req.body.data,
                 { type, uid, mail, password, cn, sn } = data;
@@ -28,7 +61,7 @@ module.exports = app => {
         }
     });
 
-    app.put('/api/users', app.permission.check('admin'), async (req, res) => {
+    app.put('/api/admin/users', app.permission.check('admin'), async (req, res) => {
         try {
             let { userId, changes } = req.body,
                 { type } = changes;
@@ -42,7 +75,7 @@ module.exports = app => {
         }
     });
 
-    app.delete('/api/users/:type/:userId', app.permission.check('admin'), async (req, res) => {
+    app.delete('/api/admin/users/:type/:userId', app.permission.check('admin'), async (req, res) => {
         try {
             let { type, userId } = req.params;
             await app.ldap.remove(type, userId);
@@ -62,14 +95,13 @@ module.exports = app => {
             let { email, password } = req.body;
             const validUser = await app.ldap.auth(email, password);
             if (validUser.uid) {
-                const [, userInfo] = await Promise.all([
-                    app.model.authLog.create({ uid: validUser.uid, method: 'mail_pass', time: Date.now() }),
-                    app.model.user.create({ uid: validUser.uid })
-                ]);
+                const userInfo = await app.model.user.create({ uid: validUser.uid });
                 let path = rand(['/user', '/pin-authen']);
                 if (!userInfo.pinCode) {
                     path = '/user';
                 }
+                if (path == '/user') await app.model.authLog.create({ uid: validUser.uid, method: 'mail_pass', time: Date.now() });
+
                 req.session.user = {
                     email: validUser.mail,
                     uid: validUser.uid,
@@ -131,5 +163,21 @@ module.exports = app => {
         }
     });
 
+    app.post('/api/user/change-password', app.permission.orCheck('staff', 'student', 'outsider'), async (req, res) => {
+        try {
+            const { data } = req.body,
+                { email, type, uid } = req.session.user;
+            const checkUser = await app.ldap.auth(email, data.oldPassword);
+            if (!checkUser) res.send({ error: 'Invalid old password' });
+            else {
+                await app.ldap.modify(type, uid, { userPassword: data.newPassword });
+                await app.model.changePassLog.create({ uid, success: true, time: Date.now() });
+                res.end();
+            }
+        } catch (error) {
+            await app.model.changePassLog.create({ uid: req.session.user.uid, success: false, time: Date.now() });
+            res.send({ error });
+        }
+    });
 
 };

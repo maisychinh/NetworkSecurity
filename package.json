@@ -1,5 +1,5 @@
 {
-    "name": "nodejs-ldapjs",
+    "name": "iam_system",
     "version": "1.0.1",
     "description": "Assignment of Security Network, HCMUT2022",
     "main": "app.js",
@@ -18,7 +18,6 @@
         }
     },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
         "nodemon": "nodemon app.js --ignore webpack.config.js --ignore *.json",
         "webpack-server": "webpack serve --mode development --color"
     },

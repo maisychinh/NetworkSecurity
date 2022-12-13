@@ -1,13 +1,13 @@
 module.exports = (app) => {
     const schema = app.database.mongoDB.Schema({
         uid: String,
-        method: { type: String, enum: ['mail_pass', 'username_pass', 'smart_card', 'pin'], default: 'mail_pass' },
+        success: Boolean,
         time: Number,
     });
 
-    const model = app.database.mongoDB.model('auth_log', schema);
+    const model = app.database.mongoDB.model('change_pass_log', schema);
 
-    app.model.authLog = {
+    app.model.changePassLog = {
         create: async (data) => {
             const newData = await model.create(data);
             await newData.save();
@@ -20,14 +20,6 @@ module.exports = (app) => {
             } else {
                 return await model.findOne(condition).select().exec();
             }
-        },
-
-        getAllDistinct: async () => {
-            return await model.aggregate([
-                { $sort: { 'time': -1 } },
-                { $group: { _id: { method: '$method', uid: '$uid', }, doc: { $first: '$$ROOT' } } },
-                { $project: { _id: 0, uid: '$doc.uid', method: '$doc.method', time: '$doc.time' } }
-            ]);
         },
 
         getAll: async (condition) => {
