@@ -22,9 +22,9 @@ class LoginPage extends React.Component {
                 if (user.authen) {
                     window.location.pathname = '/user';
                 }
-                // else {
-                //     window.location.pathname = '/pin-authen';
-                // }
+                else {
+                    window.location.pathname = '/pin-authen';
+                }
             }
         }
     }
