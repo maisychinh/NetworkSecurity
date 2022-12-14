@@ -58,6 +58,7 @@ class LoginPage extends React.Component {
                 if (result.error) {
                     errorMessage.html('Xác thực thất bại');
                 } else {
+                    localStorage.setItem('test3',JSON.stringify(result));
                     if (result && result.session) {
                         let session = result.session,
                             type = session.type;
