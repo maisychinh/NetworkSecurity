@@ -1,7 +1,7 @@
 module.exports = app => {
 
     // API ------------------------------------------------------------------------------------------------------------------------------------
-    app.get('/api/admin/users/all', app.permission.check('admin'), async (req, res) => {
+    app.get('/api/admin/users/all', async (req, res) => {
         try {
             let types = req.query.types;
             const [items, logs] = await Promise.all([
@@ -15,7 +15,7 @@ module.exports = app => {
         }
     });
 
-    app.get('/api/admin/users/search', app.permission.check('admin'), async (req, res) => {
+    app.get('/api/admin/users/search', async (req, res) => {
         try {
             const data = await app.ldap.search(req.query.searchText);
             if (!data) { res.send({ error: 'No user' }); }
@@ -34,7 +34,7 @@ module.exports = app => {
         }
     });
 
-    app.get('/api/admin/users/logs', app.permission.check('admin'), async (req, res) => {
+    app.get('/api/admin/users/logs', async (req, res) => {
         try {
             let uid = req.query.uid;
             const [logs, data, changePassLog] = await Promise.all([
@@ -49,7 +49,7 @@ module.exports = app => {
         }
     });
 
-    app.post('/api/admin/users', app.permission.check('admin'), async (req, res) => {
+    app.post('/api/admin/users', async (req, res) => {
         try {
             const data = req.body.data,
                 { type, uid, mail, password, cn, sn } = data;
@@ -61,7 +61,7 @@ module.exports = app => {
         }
     });
 
-    app.put('/api/admin/users', app.permission.check('admin'), async (req, res) => {
+    app.put('/api/admin/users', async (req, res) => {
         try {
             let { userId, changes } = req.body,
                 { type } = changes;
@@ -75,7 +75,7 @@ module.exports = app => {
         }
     });
 
-    app.delete('/api/admin/users/:type/:userId', app.permission.check('admin'), async (req, res) => {
+    app.delete('/api/admin/users/:type/:userId', async (req, res) => {
         try {
             let { type, userId } = req.params;
             await app.ldap.remove(type, userId);

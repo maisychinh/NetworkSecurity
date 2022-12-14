@@ -18,7 +18,7 @@ class LoginPage extends React.Component {
         if (user) {
             let session = user,
                 type = session.type;
-            if (type == 'admin') window.location.pathname = '/dashboard';
+            if (type == 'system') window.location.pathname = '/dashboard';
             else {
                 if (user.authen) {
                     window.location.pathname = '/user';
@@ -62,7 +62,7 @@ class LoginPage extends React.Component {
                     if (result && result.session) {
                         let session = result.session,
                             type = session.type;
-                        if (type == 'admin') window.location.pathname = '/dashboard';
+                        if (type == 'system') window.location.pathname = '/dashboard';
                         else {
                             window.location.pathname = '/user';
                         }
