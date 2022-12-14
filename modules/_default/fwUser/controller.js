@@ -1,7 +1,7 @@
 module.exports = app => {
 
     // API ------------------------------------------------------------------------------------------------------------------------------------
-    app.get('/api/admin/users/all', app.permission.check('admin'), async (req, res) => {
+    app.get('/api/admin/users/all', app.permission.check('system'), async (req, res) => {
         try {
             let types = req.query.types;
             const [items, logs] = await Promise.all([
@@ -15,7 +15,7 @@ module.exports = app => {
         }
     });
 
-    app.get('/api/admin/users/search', app.permission.check('admin'), async (req, res) => {
+    app.get('/api/admin/users/search', app.permission.check('system'), async (req, res) => {
         try {
             const data = await app.ldap.search(req.query.searchText);
             if (!data) { res.send({ error: 'No user' }); }
@@ -34,7 +34,7 @@ module.exports = app => {
         }
     });
 
-    app.get('/api/admin/users/logs', app.permission.check('admin'), async (req, res) => {
+    app.get('/api/admin/users/logs', app.permission.check('system'), async (req, res) => {
         try {
             let uid = req.query.uid;
             const [logs, data, changePassLog] = await Promise.all([
@@ -49,7 +49,7 @@ module.exports = app => {
         }
     });
 
-    app.post('/api/admin/users', app.permission.check('admin'), async (req, res) => {
+    app.post('/api/admin/users', app.permission.check('system'), async (req, res) => {
         try {
             const data = req.body.data,
                 { type, uid, mail, password, cn, sn } = data;
@@ -61,7 +61,7 @@ module.exports = app => {
         }
     });
 
-    app.put('/api/admin/users', app.permission.check('admin'), async (req, res) => {
+    app.put('/api/admin/users', app.permission.check('system'), async (req, res) => {
         try {
             let { userId, changes } = req.body,
                 { type } = changes;
@@ -75,7 +75,7 @@ module.exports = app => {
         }
     });
 
-    app.delete('/api/admin/users/:type/:userId', app.permission.check('admin'), async (req, res) => {
+    app.delete('/api/admin/users/:type/:userId', app.permission.check('system'), async (req, res) => {
         try {
             let { type, userId } = req.params;
             await app.ldap.remove(type, userId);
@@ -139,7 +139,7 @@ module.exports = app => {
         }
     });
 
-    app.get('/api/user/info', app.permission.orCheck('staff', 'student', 'outsider'), async (req, res) => {
+    app.get('/api/user/info', app.permission.orCheck('users'), async (req, res) => {
         try {
             const user = req.session.user;
             const [data, userInfo] = await Promise.all([
@@ -153,7 +153,7 @@ module.exports = app => {
         }
     });
 
-    app.post('/api/user/pin', app.permission.orCheck('staff', 'student', 'outsider'), async (req, res) => {
+    app.post('/api/user/pin', app.permission.orCheck('users'), async (req, res) => {
         try {
             let data = req.body.data, user = req.session.user;
             await app.model.user.create({ uid: user.uid, ...data, pinCode: app.model.user.hashPassword(data.pinCode), lastModified: Date.now() });
@@ -163,7 +163,7 @@ module.exports = app => {
         }
     });
 
-    app.post('/api/user/change-password', app.permission.orCheck('staff', 'student', 'outsider'), async (req, res) => {
+    app.post('/api/user/change-password', app.permission.orCheck('users'), async (req, res) => {
         try {
             const { data } = req.body,
                 { email, type, uid } = req.session.user;

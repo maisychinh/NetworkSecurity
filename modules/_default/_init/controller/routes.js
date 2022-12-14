@@ -6,9 +6,9 @@ module.exports = app => {
 
     app.get('/', app.templates.login);
     app.get('/pin-authen', app.templates.login);
-    app.get('/user', app.permission.orCheck('staff', 'student', 'outsider'), app.templates.admin);
+    app.get('/user', app.permission.orCheck('users'), app.templates.admin);
 
-    app.get('/dashboard', app.permission.check('admin'), app.templates.admin);
+    app.get('/dashboard', app.permission.check('system'), app.templates.admin);
 
     // API ------------------------------------------------------------------------------------------------------------------------------------------
     app.get('/api/system', async (req, res) => {
