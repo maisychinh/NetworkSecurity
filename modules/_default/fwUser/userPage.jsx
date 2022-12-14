@@ -67,8 +67,8 @@ export class UserPage extends AdminPage {
     }
     componentDidMount() {
         T.ready();
-        let user = this.props.system?.user;
-
+        let user = this.props.system && this.props.system.user;
+        console.log(user);
         if (!user.authen) {
             window.location = '/pin-authen';
         } else T.get('/api/user/info', result => {

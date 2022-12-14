@@ -1,4 +1,4 @@
-import user from 'modules/_default/fwUser/controller/user';
+// import user from 'modules/_default/fwUser/controller/user';
 import React from 'react';
 import { connect } from 'react-redux';
 import T from 'view/js/common';
@@ -14,8 +14,9 @@ class LoginPage extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.system && this.props.system.user) {
-            let session = this.props.system.user,
+        let user = this.props.system && this.props.system.user;
+        if (user) {
+            let session = user,
                 type = session.type;
             if (type == 'admin') window.location.pathname = '/dashboard';
             else {
@@ -57,6 +58,7 @@ class LoginPage extends React.Component {
                 if (result.error) {
                     errorMessage.html('Xác thực thất bại');
                 } else {
+                    localStorage.setItem('test3',JSON.stringify(result));
                     if (result && result.session) {
                         let session = result.session,
                             type = session.type;

@@ -139,7 +139,7 @@ module.exports = app => {
         }
     });
 
-    app.get('/api/user/info', app.permission.orCheck('staff', 'student', 'outsider'), async (req, res) => {
+    app.get('/api/user/info', async (req, res) => {
         try {
             const user = req.session.user;
             const [data, userInfo] = await Promise.all([
@@ -153,7 +153,7 @@ module.exports = app => {
         }
     });
 
-    app.post('/api/user/pin', app.permission.orCheck('staff', 'student', 'outsider'), async (req, res) => {
+    app.post('/api/user/pin', async (req, res) => {
         try {
             let data = req.body.data, user = req.session.user;
             await app.model.user.create({ uid: user.uid, ...data, pinCode: app.model.user.hashPassword(data.pinCode), lastModified: Date.now() });
@@ -163,7 +163,7 @@ module.exports = app => {
         }
     });
 
-    app.post('/api/user/change-password', app.permission.orCheck('staff', 'student', 'outsider'), async (req, res) => {
+    app.post('/api/user/change-password', async (req, res) => {
         try {
             const { data } = req.body,
                 { email, type, uid } = req.session.user;
